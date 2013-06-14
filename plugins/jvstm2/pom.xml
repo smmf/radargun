@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>org.radargun</groupId>
+      <artifactId>radargun-plugin-parent</artifactId>
+      <version>1.1.0-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
+   </parent>
+
+   <artifactId>plugin-jvstm2</artifactId>
+   <version>1.1.0-SNAPSHOT</version>
+   <name>JVSTM 2.x plugin for RadarGun</name>
+
+   <properties>
+      <version.jvstm>2.0</version.jvstm>
+      <version.slf4j.api>1.7.2</version.slf4j.api>
+   </properties>
+
+    <repositories>
+      <repository>
+        <id>jvstm-maven-repository</id>
+        <url>http://inesc-id-esw.github.io/jvstm/maven-repo</url>
+      </repository>
+    </repositories>
+
+    <pluginRepositories>
+      <pluginRepository>
+        <id>jvstm-maven-repository</id>
+        <url>http://inesc-id-esw.github.io/jvstm/maven-repo</url>
+      </pluginRepository>
+    </pluginRepositories>
+
+   <dependencies>
+       <dependency>
+           <groupId>org.radargun</groupId>
+           <artifactId>plugin-jvstm1</artifactId>
+           <version>${project.version}</version>
+           <exclusions>
+               <exclusion>
+                   <groupId>jvstm</groupId>
+                   <artifactId>jvstm-fenix</artifactId>
+               </exclusion>
+           </exclusions>
+       </dependency>
+
+       <dependency>
+           <groupId>jvstm</groupId>
+           <artifactId>jvstm</artifactId>
+           <version>${version.jvstm}</version>
+       </dependency>
+
+       <dependency>
+           <groupId>org.slf4j</groupId>
+           <artifactId>slf4j-log4j12</artifactId>
+           <version>${version.slf4j.api}</version>
+       </dependency>
+
+   </dependencies>
+
+</project>
