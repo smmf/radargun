@@ -1,0 +1,11 @@
+   <master bindAddress="${127.0.0.1:master.address}" port="${2103:master.port}"/>
+
+   <benchmark initSize="NODE_SIZE_TEMPLATE" maxSize="NODE_SIZE_TEMPLATE" increment="1">
+      <DestroyWrapper runOnAllSlaves="true"/>
+      <StartCluster staggerSlaveStartup="true" delayAfterFirstSlaveStarts="5000" delayBetweenStartingSlaves = "500"/>
+      <ClusterValidation partialReplication="false"/>
+      <StressTestWarmup numRequests="10000" opsCountStatusLog="100000" numThreads="4" transactionSize="50" duration="60000"/>
+      <ClearCluster/>
+      <StressTest numRequests="10000000" numEntries="100" opsCountStatusLog="500000" numThreads="4" useTransactions="true" transactionSize="100" writePercentage="10" writeTxPercentage="50" duration="60000" />
+      <CsvReportGeneration/>
+   </benchmark>

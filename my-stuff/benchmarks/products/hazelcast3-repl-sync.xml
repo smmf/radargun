@@ -1,0 +1,5 @@
+   <products>
+      <hazelcast3>
+         <config name="hzl3-repl-sync.xml"/>
+      </hazelcast3>
+   </products>

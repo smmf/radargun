@@ -1,0 +1,5 @@
+   <products>
+      <ff2>
+         <config decorate="tdmock" name="mock-repl-sync-rc.xml"/>
+      </ff2>
+   </products>

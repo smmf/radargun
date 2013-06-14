@@ -1,0 +1,5 @@
+   <products>
+      <jbosscache3>
+         <config name="mvcc/mvcc-repl-sync.xml"/>
+      </jbosscache3>
+   </products>

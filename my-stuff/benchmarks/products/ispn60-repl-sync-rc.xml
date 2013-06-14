@@ -1,0 +1,5 @@
+   <products>
+      <infinispan60>
+         <config name="ispn60-repl-sync-rc.xml"/>
+      </infinispan60>
+   </products>

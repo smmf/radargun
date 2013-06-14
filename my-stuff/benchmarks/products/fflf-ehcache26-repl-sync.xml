@@ -1,0 +1,5 @@
+   <products>
+      <ff2-lf>
+         <config decorate="ehcache26" name="eh26-repl-sync.xml" cache="cache" />
+      </ff2-lf>
+   </products>

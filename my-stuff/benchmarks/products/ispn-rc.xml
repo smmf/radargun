@@ -1,0 +1,5 @@
+   <products>
+      <infinispan52>
+         <config name="ispn52-repl-sync-rc.xml"/>
+      </infinispan52>
+   </products>

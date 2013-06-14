@@ -1,0 +1,54 @@
+<bench-config xmlns="urn:radargun:benchmark:1.1">
+
+   <master bindAddress="${127.0.0.1:master.address}" port="${2103:master.port}"/>
+
+   <benchmark initSize="NODE_SIZE_TEMPLATE" maxSize="NODE_SIZE_TEMPLATE" increment="1">
+      <DestroyWrapper runOnAllSlaves="true"/>
+      <StartCluster staggerSlaveStartup="true" delayAfterFirstSlaveStarts="5000" delayBetweenStartingSlaves = "500"/>
+      <ClusterValidation partialReplication="false"/>
+      <StressTestWarmup numRequests="2500" opsCountStatusLog="500" numThreads="2"/>
+      <ClearCluster/>
+      <StressTest numRequests="8000000" opsCountStatusLog="500000" numThreads="16" useTransactions="true" transactionSize="10000" writePercentage="0" />
+      <CsvReportGeneration/>
+   </benchmark>
+
+   <products>
+      <!-- <ff2-lf> -->
+      <!--    <config decorate="infinispan52" name="ispn52-repl-sync-rc.xml"/> -->
+      <!-- </ff2-lf> -->
+
+      <ff2>
+         <config decorate="infinispan52" name="ispn52-repl-sync-rc.xml"/>
+      </ff2>
+<!--
+      <infinispan52>
+         <config name="ispn52-repl-sync-rc.xml"/>
+         <config name="ispn52-repl-sync-rr.xml"/>
+      </infinispan52>
+-->
+
+      <!-- hazelcast2 plugin uses a different plugin version than ff2. Because
+           of that it fails to run in the same benchmark.  The solution is to
+           make two runs while keeping the 'reports' dir.  It will work and
+           generate the correct stats in the end of the second run.  However,
+           that only worked while ff2 used hazelcast < 3. Since then, they are
+           not compatible. -->
+
+      <!-- <ff2> -->
+      <!--    <config decorate="hazelcast2" name="hazelcast2.xml"/> -->
+      <!-- </ff2> -->
+      <!-- <hazelcast2> -->
+      <!--    <config name="hazelcast2.xml"/> -->
+      <!-- </hazelcast2> -->
+
+   </products>
+
+   <reports>
+      <!-- <report name="Replicated"> -->
+      <!--    <item product="ff2" config="ispn52-repl-sync.xml"/> -->
+      <!--    <item product="infinispan52" config="ispn52-repl-sync.xml"/> -->
+      <!-- </report> -->
+      <report name="All" includeAll="true"/>
+   </reports>
+
+</bench-config>

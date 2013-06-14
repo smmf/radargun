@@ -1,0 +1,5 @@
+   <products>
+      <tdmock>
+         <config name="mock-repl-sync-rc.xml"/>
+      </tdmock>
+   </products>

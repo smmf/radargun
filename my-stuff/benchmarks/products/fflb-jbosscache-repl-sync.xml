@@ -1,0 +1,5 @@
+   <products>
+      <ff2>
+         <config decorate="jbosscache3" name="mvcc/mvcc-repl-sync.xml"/>
+      </ff2>
+   </products>

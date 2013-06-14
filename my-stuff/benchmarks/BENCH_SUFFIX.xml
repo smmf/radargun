@@ -1,0 +1,10 @@
+
+   <reports>
+      <!-- <report name="Replicated"> -->
+      <!--    <item product="ff2" config="ispn52-repl-sync.xml"/> -->
+      <!--    <item product="infinispan52" config="ispn52-repl-sync.xml"/> -->
+      <!-- </report> -->
+      <report name="All" includeAll="true"/>
+   </reports>
+
+</bench-config>

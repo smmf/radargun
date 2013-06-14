@@ -1,0 +1,5 @@
+   <products>
+      <ff2-lf>
+         <config decorate="infinispan60" name="ispn60-repl-sync-rc.xml"/>
+      </ff2-lf>
+   </products>

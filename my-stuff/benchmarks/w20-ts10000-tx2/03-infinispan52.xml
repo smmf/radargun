@@ -1,0 +1,17 @@
+<local-bench-config>
+
+   <benchmark>
+      <Warmup operationCount="100000" numThreads="1"/>
+      <StressTest numRequests="5000000" opsCountStatusLog="500000" useTransactions="true" numThreads="2" sysMonitorEnabled="false" transactionSize="10000" writePercentage="20" />
+   </benchmark>
+
+   <products>
+      <infinispan52>
+         <config name="ispn52-local.xml" cache="testCache"/>
+      </infinispan52>
+   </products>
+
+   <reports>
+   </reports>
+</local-bench-config>
+      

@@ -1,0 +1,5 @@
+   <products>
+      <ehcache26>
+         <config name="eh26-repl-sync.xml" cache="cache" />
+      </ehcache26>
+   </products>

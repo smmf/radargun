@@ -1,0 +1,84 @@
+<local-bench-config>
+
+   <benchmark>
+      <Warmup operationCount="100000" numThreads="1"/>
+      <!--
+         This will average to 10000 requests per thread, although a work-stealing pattern is used so some threads may
+         do more work than others.
+       -->
+ 
+      <!-- <StressTest numRequests="25000000" opsCountStatusLog="10000" numThreads="25" sysMonitorEnabled="true"/> -->
+      <!-- <StressTest numRequests="5000000" opsCountStatusLog="500000" useTransactions="true" numThreads="1" sysMonitorEnabled="false" transactionSize="10000" writePercentage="20" /> -->
+      <StressTest numRequests="5000000" opsCountStatusLog="500000" useTransactions="true" numThreads="2" sysMonitorEnabled="false" transactionSize="10000" writePercentage="20" />
+   </benchmark>
+
+   <products>
+      <!-- <infinispan50> -->
+      <!--    <config name="local-config.xml" cache="x"/> -->
+      <!-- </infinispan50> -->
+      <!-- <infinispan51> -->
+      <!--    <config name="local-config.xml" cache="x"/> -->
+      <!-- </infinispan51> -->
+      <!-- <infinispan52> -->
+      <!--    <config name="local-config.xml" cache="x"/> -->
+      <!-- </infinispan52> -->
+
+      <!-- <infinispan52> -->
+      <!--    <config name="ispn52-local.xml" cache="testCache"/> -->
+      <!-- </infinispan52> -->
+
+      <ff2>
+          <!-- 
+               Configs are specific to the wrapped plugin.  Just add to the
+               plugin's expected configs the 'decorate' property (stating
+               which is the underlying plugin to use.
+                -->
+          <!-- <config decorate="infinispan52" name="ispn52-local.xml" cache="testCache"/> -->
+          <config decorate="hazelcast2" name="dist-sync.xml" />
+      </ff2>
+
+      <!-- <jvstm1> -->
+      <!--     <config name="jvstm" /> -->
+      <!-- </jvstm1> -->
+
+      <!-- <jvstm2> -->
+      <!--     <config name="jvstm" /> -->
+      <!-- </jvstm2> -->
+
+      <!-- <hazelcast2> -->
+      <!--     <config name="dist-sync.xml" /> -->
+      <!-- </hazelcast2> -->
+
+      <!--
+      <jbosscache3>
+         <config name="mvcc/mvcc-local-RR.xml"/>
+         <config name="mvcc/mvcc-local-RC.xml"/>
+      </jbosscache3>
+      <ehcache25>
+         <config name="ehcache-local.xml"/>
+      </ehcache25>
+      -->
+   </products>
+
+
+   <reports>
+       <!-- <report name="teste"> -->
+       <!--     <item product="infinispan52" config="local.xml" /> -->
+       <!-- </report> -->
+
+      <!--
+      <report name="repeatable-read">
+         <item product="infinispan4" config="local/repeatable-read.xml"/>
+         <item product="jbosscache3" config="mvcc/mvcc-local-RR.xml"/>
+         <item product="ehcache25" config="ehcache-local.xml"/>
+      </report>
+      <report name="read-committed">
+         <item product="infinispan4" config="local/read-committed.xml"/>
+         <item product="jbosscache3" config="mvcc/mvcc-local-RC.xml"/>
+         <item product="ehcache25" config="ehcache-local.xml"/>
+      </report>
+      -->
+      <!-- <report name="all_included" includeAll="true"/> -->
+   </reports>
+</local-bench-config>
+      
