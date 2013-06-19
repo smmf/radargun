@@ -8,6 +8,7 @@ if [ "x$RADARGUN_HOME" = "x" ]; then DIRNAME=`dirname $0`; RADARGUN_HOME=`cd $DI
 MASTER_HOST=""
 MASTER_PORT=""
 LOG4J_PREFIX=`hostname`-$RANDOM
+TAILF=false
 
 
 default_master() {
@@ -55,6 +56,9 @@ do
       SLAVE_NAME=$2
       shift
       ;;
+    "-t")
+      TAILF=true
+      ;;
     "-h")
       help_and_exit
       ;;
@@ -88,3 +92,7 @@ echo "--------------------------------------------------------------------------
 nohup ${JAVA} ${JVM_OPTS} ${D_VARS} -classpath $CP org.radargun.Slave ${CONF} >> stdout_slave_${LOG4J_PREFIX}.out 2>&1 &
 echo "... done! Slave process started on host ${HOSTNAME}!"
 echo ""
+if [ $TAILF == "true" ]
+then
+  tail -f stdout_slave_${LOG4J_PREFIX}.out
+fi  
