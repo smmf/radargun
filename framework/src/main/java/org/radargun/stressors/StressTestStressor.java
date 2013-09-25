@@ -42,6 +42,9 @@ public class StressTestStressor extends AbstractCacheWrapperStressor {
    @Property(doc = "The frequency of writes (percentage). Default is 20%")
    private int writePercentage = 20;
 
+   @Property(doc = "The frequency of transactions that may perform writes (percentage). Default is 20%")
+   public int writeTxPercentage = 40;
+
    @Property(doc = "The frequency of removes (percentage). Default is 0%")
    private int removePercentage = 0;
 
@@ -127,6 +130,13 @@ public class StressTestStressor extends AbstractCacheWrapperStressor {
    protected List<Stressor> stressors = new ArrayList<Stressor>(numThreads);
    private Statistics statisticsPrototype = new SimpleStatistics();
 
+   private static final ThreadLocal<Boolean> currentTransactionIsReadOnly = new ThreadLocal<Boolean>() {
+      @Override
+      protected Boolean initialValue() {
+         return Boolean.FALSE;
+      }
+   };
+   
    protected void init(CacheWrapper wrapper) {
       this.cacheWrapper = wrapper;
       if (wrapper instanceof AtomicOperationsCapable) {
@@ -296,7 +306,10 @@ public class StressTestStressor extends AbstractCacheWrapperStressor {
          int randomKeyInt = r.nextInt(numEntries - 1);
          Object key = getKey(randomKeyInt, stressor.threadIndex);
 
-         if (randomAction < writePercentage) {
+         // check if ThreadLocal var already states the decision
+         if (currentTransactionIsReadOnly.get()) {
+            return stressor.makeRequest(iteration, Operation.GET, key);
+         } else if (randomAction < writePercentage) {
             return stressor.makeRequest(iteration, Operation.PUT, key, generateValue(entrySize));
          } else if (randomAction < writePercentage + removePercentage) {
             return stressor.makeRequest(iteration, Operation.REMOVE, key);
@@ -766,6 +779,13 @@ public class StressTestStressor extends AbstractCacheWrapperStressor {
       private long startTransaction() throws TransactionException {
          long start = System.nanoTime();
          try {
+            // decide the type of transaction
+            int randomTransaction = r.nextInt(100);
+            if (randomTransaction < writeTxPercentage) {
+               currentTransactionIsReadOnly.set(Boolean.FALSE);
+            } else {
+               currentTransactionIsReadOnly.set(Boolean.TRUE);
+            }
             cacheWrapper.startTransaction();
          } catch (Exception e) {
             long time = System.nanoTime() - start;

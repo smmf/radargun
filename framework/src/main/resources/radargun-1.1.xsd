@@ -578,6 +578,11 @@
                   <documentation>Ratio of writes = PUT requests (percentage). Default is 20%</documentation>
                </annotation>
             </attribute>
+            <attribute name="writeTxPercentage" type="rg:int">
+               <annotation>
+                  <documentation>The frequency of transactions that may perform writes (percentage). Default is 20%</documentation>
+               </annotation>
+            </attribute>
          </extension>
       </complexContent>
    </complexType>

@@ -53,6 +53,9 @@ public class StressTestStage extends AbstractDistStage {
    @Property(doc = "Ratio of writes = PUT requests (percentage). Default is 20%")
    protected int writePercentage = 20;
 
+   @Property(doc = "The frequency of transactions that may perform writes (percentage). Default is 20%")
+   private int writeTxPercentage = 20;
+
    @Property(doc = "The frequency of removes (percentage). Default is 0%")
    private int removePercentage = 0;
 
