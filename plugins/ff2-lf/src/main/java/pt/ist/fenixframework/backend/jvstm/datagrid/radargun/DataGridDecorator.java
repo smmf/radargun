@@ -3,6 +3,7 @@ package pt.ist.fenixframework.backend.jvstm.datagrid.radargun;
 import java.net.URLClassLoader;
 
 import org.radargun.CacheWrapper;
+import org.radargun.features.AtomicOperationsCapable;
 import org.radargun.utils.TypedProperties;
 import org.radargun.utils.Utils;
 import org.slf4j.Logger;
@@ -91,9 +92,14 @@ public class DataGridDecorator implements DataGrid {
     @Override
     public void putIfAbsent(Object key, Object value) {
         try {
-            Object current = this.cacheWrapper.get(null, key);
-            if (current == null) {
-                this.cacheWrapper.put(null, key, value);
+            if (this.cacheWrapper instanceof AtomicOperationsCapable) {
+                AtomicOperationsCapable atomicWrapper = (AtomicOperationsCapable) this.cacheWrapper;
+                atomicWrapper.putIfAbsent(null, key, value);
+            } else {
+                Object current = this.cacheWrapper.get(null, key);
+                if (current == null) {
+                    this.cacheWrapper.put(null, key, value);
+                }
             }
         } catch (Exception e) {
             logger.warn(UNDERLYING_WRAPPER_EXCEPTION);
