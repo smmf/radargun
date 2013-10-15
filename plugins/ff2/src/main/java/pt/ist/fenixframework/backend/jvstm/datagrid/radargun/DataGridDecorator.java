@@ -63,7 +63,7 @@ public class DataGridDecorator implements DataGrid {
         try {
             this.cacheWrapper.tearDown();
         } catch (Exception e) {
-            logger.warn(UNDERLYING_WRAPPER_EXCEPTION);
+            logger.warn(UNDERLYING_WRAPPER_EXCEPTION, e);
             throw new PersistenceException(UNDERLYING_WRAPPER_EXCEPTION, e);
         }
     }
@@ -73,7 +73,7 @@ public class DataGridDecorator implements DataGrid {
         try {
             return this.cacheWrapper.get(null, key);
         } catch (Exception e) {
-            logger.warn(UNDERLYING_WRAPPER_EXCEPTION);
+            logger.warn(UNDERLYING_WRAPPER_EXCEPTION, e);
             throw new PersistenceException(UNDERLYING_WRAPPER_EXCEPTION, e);
         }
     }
@@ -83,7 +83,7 @@ public class DataGridDecorator implements DataGrid {
         try {
             this.cacheWrapper.put(null, key, value);
         } catch (Exception e) {
-            logger.warn(UNDERLYING_WRAPPER_EXCEPTION);
+            logger.warn(UNDERLYING_WRAPPER_EXCEPTION, e);
             throw new PersistenceException(UNDERLYING_WRAPPER_EXCEPTION, e);
         }
     }
