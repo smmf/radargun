@@ -24,6 +24,19 @@ public class DataGridDecorator implements DataGrid {
 
     private static final String UNDERLYING_WRAPPER_EXCEPTION = "Exception in underlying cache wrapper";
 
+    private static final Class<? extends CacheWrapper> INFINISPAN_WRAPPER_CLASS = initInfinispanWrapperClass();
+
+    private static Class<? extends CacheWrapper> initInfinispanWrapperClass() {
+        try {
+            Class<? extends CacheWrapper> result =
+                    Class.forName("org.radargun.cachewrappers.InfinispanWrapper").asSubclass(CacheWrapper.class);
+            logger.info("Successfuly obtained INFINISPAN_WRAPPER_CLASS");
+            return result;
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
     private CacheWrapper cacheWrapper;
     private boolean inTransaction = false;
 
@@ -64,7 +77,7 @@ public class DataGridDecorator implements DataGrid {
         try {
             this.cacheWrapper.tearDown();
         } catch (Exception e) {
-            logger.warn(UNDERLYING_WRAPPER_EXCEPTION);
+            logger.warn(UNDERLYING_WRAPPER_EXCEPTION, e);
             throw new PersistenceException(UNDERLYING_WRAPPER_EXCEPTION, e);
         }
     }
@@ -74,7 +87,7 @@ public class DataGridDecorator implements DataGrid {
         try {
             return this.cacheWrapper.get(null, key);
         } catch (Exception e) {
-            logger.warn(UNDERLYING_WRAPPER_EXCEPTION);
+            logger.warn(UNDERLYING_WRAPPER_EXCEPTION, e);
             throw new PersistenceException(UNDERLYING_WRAPPER_EXCEPTION, e);
         }
     }
@@ -84,7 +97,7 @@ public class DataGridDecorator implements DataGrid {
         try {
             this.cacheWrapper.put(null, key, value);
         } catch (Exception e) {
-            logger.warn(UNDERLYING_WRAPPER_EXCEPTION);
+            logger.warn(UNDERLYING_WRAPPER_EXCEPTION, e);
             throw new PersistenceException(UNDERLYING_WRAPPER_EXCEPTION, e);
         }
     }
@@ -92,7 +105,7 @@ public class DataGridDecorator implements DataGrid {
     @Override
     public void putIfAbsent(Object key, Object value) {
         try {
-            if (this.cacheWrapper instanceof AtomicOperationsCapable) {
+            if (canUsePutIfAbsent()) {
                 AtomicOperationsCapable atomicWrapper = (AtomicOperationsCapable) this.cacheWrapper;
                 atomicWrapper.putIfAbsent(null, key, value);
             } else {
@@ -102,9 +115,13 @@ public class DataGridDecorator implements DataGrid {
                 }
             }
         } catch (Exception e) {
-            logger.warn(UNDERLYING_WRAPPER_EXCEPTION);
+            logger.warn(UNDERLYING_WRAPPER_EXCEPTION, e);
             throw new PersistenceException(UNDERLYING_WRAPPER_EXCEPTION, e);
         }
+    }
+
+    private boolean canUsePutIfAbsent() {
+        return (INFINISPAN_WRAPPER_CLASS != null) && (INFINISPAN_WRAPPER_CLASS.isInstance(this.cacheWrapper));
     }
 
     @Override
