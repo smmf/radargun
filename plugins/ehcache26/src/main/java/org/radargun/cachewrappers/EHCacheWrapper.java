@@ -7,10 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+
+import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.Status;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.radargun.CacheWrapper;
@@ -28,8 +32,9 @@ import org.radargun.utils.TypedProperties;
  * @author Manik Surtani (manik@surtani.org)
  */
 public class EHCacheWrapper implements CacheWrapper, AtomicOperationsCapable, BulkOperationsCapable {
+//   protected TransactionManager tm;
    private CacheManager manager;
-   private Ehcache cache;
+   private Cache cache;
    private Log log = LogFactory.getLog("org.radargun.cachewrappers.EHCacheWrapper");
    boolean localMode;
    private String configFile, cacheName;
@@ -48,8 +53,11 @@ public class EHCacheWrapper implements CacheWrapper, AtomicOperationsCapable, Bu
       manager = new CacheManager(url);
       log.info("Caches available:");
 
+      
       for (String s : manager.getCacheNames()) log.info("    * " + s);
       cache = manager.getCache(cacheName);
+
+//      tm = cache.getTransactionManagerLookup().getTransactionManager();
 
       log.info("Using named cache " + cache);
       if (!localMode) {
@@ -71,15 +79,71 @@ public class EHCacheWrapper implements CacheWrapper, AtomicOperationsCapable, Bu
 
    public void putSerializable(Serializable key, Serializable value) throws Exception {
       Element element = new Element(key, value);
-      cache.put(element);
+
+      boolean autoCommit = false;
+      if (manager.getTransactionController().getCurrentTransactionContext() == null) {
+          startTransaction();
+          autoCommit = true;
+      }
+//      Transaction tx = tm.getTransaction();
+//      if (tx == null || tx.getStatus() != javax.transaction.Status.STATUS_ACTIVE) {
+//          startTransaction();
+//          autoCommit = true;
+//          System.out.println("autocommit Tx did not exist!!!");
+//      } else {
+//          System.out.println("Tx already exists!!!");
+//      }
+      
+      try {
+          cache.put(element);
+      } finally {
+          if (autoCommit) {
+              endTransaction(true);
+          }
+      }
    }
 
    public Object getSerializable(Serializable key) throws Exception {
-      return cache.get(key);
+      boolean autoCommit = false;
+
+      if (manager.getTransactionController().getCurrentTransactionContext() == null) {
+          startTransaction();
+          autoCommit = true;
+      }
+      
+//      Transaction tx = tm.getTransaction();
+//      if (tx == null || tx.getStatus() != javax.transaction.Status.STATUS_ACTIVE) {
+//          startTransaction();
+//          autoCommit = true;
+//          System.out.println("GET: autocommit Tx did not exist!!!");
+//      } else {
+//          System.out.println("GET: Tx already exists!!!");
+//      }
+      
+      try {
+          return cache.get(key);
+      } finally {
+          if (autoCommit) {
+              endTransaction(true);
+          } 
+      }
    }
 
    public void empty() throws Exception {
-      cache.removeAll();
+       boolean autoCommit = false;
+
+       if (manager.getTransactionController().getCurrentTransactionContext() == null) {
+           startTransaction();
+           autoCommit = true;
+       }
+
+       try {
+           cache.removeAll();
+       } finally {
+           if (autoCommit) {
+               endTransaction(true);
+           }
+       }
    }
 
    public void put(String path, Object key, Object value) throws Exception {
@@ -95,32 +159,84 @@ public class EHCacheWrapper implements CacheWrapper, AtomicOperationsCapable, Bu
 
    @Override
    public Object remove(String bucket, Object key) throws Exception {
-      return cache.remove(key);
+       boolean autoCommit = false;
+
+       if (manager.getTransactionController().getCurrentTransactionContext() == null) {
+           startTransaction();
+           autoCommit = true;
+       }
+
+       try {
+           return cache.remove(key);
+       } finally {
+           if (autoCommit) {
+               endTransaction(true);
+           }
+       }
    }
 
    @Override
    public boolean replace(String bucket, Object key, Object oldValue, Object newValue) throws Exception {
-      Serializable sKey = (Serializable) key;
-      Element oldElement = new Element(sKey, (Serializable) oldValue);
-      Element newElement = new Element(sKey, (Serializable) newValue);
-      return cache.replace(oldElement, newElement);
+       Serializable sKey = (Serializable) key;
+       Element oldElement = new Element(sKey, (Serializable) oldValue);
+       Element newElement = new Element(sKey, (Serializable) newValue);
+       boolean autoCommit = false;
+
+       if (manager.getTransactionController().getCurrentTransactionContext() == null) {
+           startTransaction();
+           autoCommit = true;
+       }
+
+       try {
+           return cache.replace(oldElement, newElement);
+       } finally {
+           if (autoCommit) {
+               endTransaction(true);
+           }
+       }
    }
 
    @Override
    public Object putIfAbsent(String bucket, Object key, Object value) throws Exception {
-      Element element = new Element((Serializable) key, (Serializable) value);
-      Element previous = cache.putIfAbsent(element);
-      return previous.getValue();
+       boolean autoCommit = false;
+
+       if (manager.getTransactionController().getCurrentTransactionContext() == null) {
+           startTransaction();
+           autoCommit = true;
+       }
+
+       try {
+           Element element = new Element((Serializable) key, (Serializable) value);
+           Element previous = cache.putIfAbsent(element);
+           return previous.getValue();
+       } finally {
+           if (autoCommit) {
+               endTransaction(true);
+           }
+       }
    }
 
    @Override
    public boolean remove(String bucket, Object key, Object oldValue) throws Exception {
-      Element element = new Element((Serializable) key, (Serializable) oldValue);
-      return cache.removeElement(element);
+       boolean autoCommit = false;
+
+       if (manager.getTransactionController().getCurrentTransactionContext() == null) {
+           startTransaction();
+           autoCommit = true;
+       }
+
+       try {
+           Element element = new Element((Serializable) key, (Serializable) oldValue);
+           return cache.removeElement(element);
+       } finally {
+           if (autoCommit) {
+               endTransaction(true);
+           }
+       }
    }
 
    public int getNumMembers() {
-      return localMode ? 0 : manager.getCacheManagerPeerProvider("RMI").listRemoteCachePeers(cache).size();
+      return localMode ? 1 : manager.getCacheManagerPeerProvider("RMI").listRemoteCachePeers(cache).size() + 1;
    }
 
    public String getInfo() {
@@ -137,20 +253,53 @@ public class EHCacheWrapper implements CacheWrapper, AtomicOperationsCapable, Bu
 
    @Override
    public boolean isTransactional(String bucket) {
-      return false;
+      return true;
    }
 
    public void startTransaction() {
-      throw new UnsupportedOperationException("Does not support JTA!");
+       manager.getTransactionController().begin(10); // this is a problem. It looks like timeouts are used to restart a tx that touches the same keys (mapTxIdToCommitVersion)
+//       try {
+//           tm.begin();
+////           Transaction transaction = tm.getTransaction();
+////           if (enlistExtraXAResource) {
+////              transaction.enlistResource(new DummyXAResource());
+////           }
+//        }
+//        catch (Exception e) {
+//           throw new RuntimeException(e);
+//        }
    }
 
    public void endTransaction(boolean successful) {
-      throw new UnsupportedOperationException("Does not support JTA!");
+       try {
+           if (successful) {
+//               tm.commit();
+               manager.getTransactionController().commit();
+           } else {
+//               tm.rollback();
+               manager.getTransactionController().rollback();
+           }
+       } catch (Exception e) {
+           throw new RuntimeException(e);
+       }
    }
 
    @Override
    public int getLocalSize() {
-      return cache.getKeys().size();
+       boolean autoCommit = false;
+
+       if (manager.getTransactionController().getCurrentTransactionContext() == null) {
+           startTransaction();
+           autoCommit = true;
+       }
+
+       try {
+           return cache.getKeys().size();
+       } finally {
+           if (autoCommit) {
+               endTransaction(true);
+           }
+       }
    }
 
    @Override
@@ -160,27 +309,66 @@ public class EHCacheWrapper implements CacheWrapper, AtomicOperationsCapable, Bu
 
    @Override
    public Map<Object, Object> getAll(String bucket, Set<Object> keys, boolean preferAsync) throws Exception {
-      Map<Object, Object> map = new HashMap<Object, Object>();
-      Map<Object, Element> elements = cache.getAll(keys);
-      for (Element element : elements.values()) {
-         map.put(element.getObjectKey(), element.getObjectValue());
-      }
-      return map;
+       boolean autoCommit = false;
+
+       if (manager.getTransactionController().getCurrentTransactionContext() == null) {
+           startTransaction();
+           autoCommit = true;
+       }
+
+       try {
+           Map<Object, Object> map = new HashMap<Object, Object>();
+           Map<Object, Element> elements = cache.getAll(keys);
+           for (Element element : elements.values()) {
+               map.put(element.getObjectKey(), element.getObjectValue());
+           }
+           return map;
+       } finally {
+           if (autoCommit) {
+               endTransaction(true);
+           }
+       }
    }
 
    @Override
    public Map<Object, Object> putAll(String bucket, Map<Object, Object> entries, boolean preferAsync) throws Exception {
-      ArrayList<Element> elements = new ArrayList<Element>(entries.size());
-      for (Map.Entry<Object, Object> entry : entries.entrySet()) {
-         elements.add(new Element(entry.getKey(), entry.getValue()));
-      }
-      cache.putAll(elements);
-      return null;
+       boolean autoCommit = false;
+
+       if (manager.getTransactionController().getCurrentTransactionContext() == null) {
+           startTransaction();
+           autoCommit = true;
+       }
+
+       try {
+           ArrayList<Element> elements = new ArrayList<Element>(entries.size());
+           for (Map.Entry<Object, Object> entry : entries.entrySet()) {
+               elements.add(new Element(entry.getKey(), entry.getValue()));
+           }
+           cache.putAll(elements);
+           return null;
+       } finally {
+           if (autoCommit) {
+               endTransaction(true);
+           }
+       }
    }
 
    @Override
    public Map<Object, Object> removeAll(String bucket, Set<Object> keys, boolean preferAsync) throws Exception {
-      cache.removeAll(keys);
-      return null;
+       boolean autoCommit = false;
+
+       if (manager.getTransactionController().getCurrentTransactionContext() == null) {
+           startTransaction();
+           autoCommit = true;
+       }
+
+       try {
+           cache.removeAll(keys);
+           return null;
+       } finally {
+           if (autoCommit) {
+               endTransaction(true);
+           }
+       }
    }
 }
