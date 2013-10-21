@@ -6,6 +6,7 @@
       <ClusterValidation partialReplication="false"/>
       <StressTestWarmup numRequests="10000" opsCountStatusLog="100000" numThreads="4" transactionSize="50" duration="60000"/>
       <ClearCluster/>
-      <StressTest numRequests="10000000" numEntries="1000" opsCountStatusLog="500000" numThreads="4" useTransactions="true" transactionSize="1000" writePercentage="10" writeTxPercentage="50" duration="60000" />
+      <InitStressTest numRequests="10000000" numEntries="1000" opsCountStatusLog="500000" numThreads="4" useTransactions="true" transactionSize="1000" writePercentage="10" writeTxPercentage="50" duration="60000" />
+      <ContinueStressTest numRequests="10000000" numEntries="1000" opsCountStatusLog="500000" numThreads="4" useTransactions="true" transactionSize="1000" writePercentage="10" writeTxPercentage="50" duration="60000" />
       <CsvReportGeneration/>
    </benchmark>
