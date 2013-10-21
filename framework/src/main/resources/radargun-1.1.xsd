@@ -26,11 +26,15 @@
                         <element name="WebSessionBenchmark" type="rg:StressTest"/>
                         <element name="ClientStressTest" type="rg:ClientStressTest"/>
                         <element name="ClusterValidation" type="rg:ClusterValidation"/>
+                        <element name="ContinueStressTest" type="rg:ContinueStressTest"/>
+                        <element name="WebSessionBenchmark" type="rg:ContinueStressTest"/>
                         <element name="CsvReportGeneration" type="rg:CsvReportGeneration"/>
                         <element name="DataForQuery" type="rg:DataForQuery"/>
                         <element name="DestroyWrapper" type="rg:DestroyWrapper"/>
                         <element name="DistributedTask" type="rg:DistributedTask"/>
                         <element name="GenerateChart" type="rg:GenerateChart"/>
+                        <element name="InitStressTest" type="rg:InitStressTest"/>
+                        <element name="WebSessionBenchmark" type="rg:InitStressTest"/>
                         <element name="IsolationLevelCheck" type="rg:IsolationLevelCheck"/>
                         <element name="JMXClusterValidation" type="rg:JMXClusterValidation"/>
                         <element name="JMXClusterValidationPrepare" type="rg:JMXClusterValidationPrepare"/>
@@ -139,11 +143,15 @@
             <element name="WebSessionBenchmark" type="rg:StressTest"/>
             <element name="ClientStressTest" type="rg:ClientStressTest"/>
             <element name="ClusterValidation" type="rg:ClusterValidation"/>
+            <element name="ContinueStressTest" type="rg:ContinueStressTest"/>
+            <element name="WebSessionBenchmark" type="rg:ContinueStressTest"/>
             <element name="CsvReportGeneration" type="rg:CsvReportGeneration"/>
             <element name="DataForQuery" type="rg:DataForQuery"/>
             <element name="DestroyWrapper" type="rg:DestroyWrapper"/>
             <element name="DistributedTask" type="rg:DistributedTask"/>
             <element name="GenerateChart" type="rg:GenerateChart"/>
+            <element name="InitStressTest" type="rg:InitStressTest"/>
+            <element name="WebSessionBenchmark" type="rg:InitStressTest"/>
             <element name="IsolationLevelCheck" type="rg:IsolationLevelCheck"/>
             <element name="JMXClusterValidation" type="rg:JMXClusterValidation"/>
             <element name="JMXClusterValidationPrepare" type="rg:JMXClusterValidationPrepare"/>
@@ -646,6 +654,165 @@
          </extension>
       </complexContent>
    </complexType>
+   <complexType name="ContinueStressTest">
+      <annotation>
+         <documentation>Benchmark where several client threads access cache limited by time or number of requests.</documentation>
+      </annotation>
+      <complexContent>
+         <extension base="rg:AbstractDist">
+            <attribute name="bulkSize" type="rg:int">
+               <annotation>
+                  <documentation>Number of keys inserted/retrieved within one operation. Applicable only when the cache wrappersupports bulk operations. Default is 1 (no bulk operations).</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="cacheSpecificKeyGenerator" type="rg:boolean">
+               <annotation>
+                  <documentation>Specifies whether the key generator is produced by a cache wrapper and therefore is product-specific. Default is false.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="commitTransactions" type="rg:boolean">
+               <annotation>
+                  <documentation>Specifies whether the transactions should be committed (true) or rolled back (false). Default is true</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="duration" type="rg:long__org_radargun_config_TimeConverter">
+               <annotation>
+                  <documentation>Benchmark duration. This takes precedence over numRequests. By default switched off.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="entrySize" type="rg:int">
+               <annotation>
+                  <documentation>Size of the value in bytes. Default is 1000.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="fixedKeys" type="rg:boolean">
+               <annotation>
+                  <documentation>The keys can be fixed for the whole test run period or we the set can change over time. Default is true = fixed.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="generateHistogramRange" type="rg:boolean">
+               <annotation>
+                  <documentation>Generate a range for histogram with operations statistics (for use in next stress tests). Default is false.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="keyGeneratorClass" type="string">
+               <annotation>
+                  <documentation>Full class name of the key generator. Default is org.radargun.stressors.StringKeyGenerator.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="keyGeneratorParam" type="string">
+               <annotation>
+                  <documentation>Used to initialize the key generator. Null by default.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="loadAllKeys" type="rg:boolean">
+               <annotation>
+                  <documentation>This option is valid only for sharedKeys=true. It forces local loading of all keys (not only numEntries/numNodes). Default is false.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="numEntries" type="rg:int">
+               <annotation>
+                  <documentation>Number of key-value entries per each client thread which should be used. Default is 100.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="numOfThreads" type="rg:int">
+               <annotation>
+                  <documentation>*DEPRECATED* The number of threads that will work on this slave. Default is 10.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="numRequests" type="rg:int">
+               <annotation>
+                  <documentation>Total number of request to be made against this session: reads + writes. If duration is specified this value is ignored. Default is 50000.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="numThreads" type="rg:int">
+               <annotation>
+                  <documentation>The number of threads that will work on this slave. Default is 10.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="numberOfAttributes" type="rg:int">
+               <annotation>
+                  <documentation>*DEPRECATED* Number of key-value entries per each client thread which should be used. Default is 100.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="numberOfRequests" type="rg:int">
+               <annotation>
+                  <documentation>*DEPRECATED* Total number of request to be made against this session: reads + writes. If duration is specified this value is ignored. Default is 50000.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="opsCountStatusLog" type="rg:int">
+               <annotation>
+                  <documentation>Number of operations after which a log entry should be written. Default is 5000.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="poolKeys" type="rg:boolean">
+               <annotation>
+                  <documentation>Keep all keys in a pool - do not generate the keys for each request anew. Default is true.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="preferAsyncOperations" type="rg:boolean">
+               <annotation>
+                  <documentation>When executing bulk operations, prefer version with multiple async operations over native implementation. Default is false.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="removePercentage" type="rg:int">
+               <annotation>
+                  <documentation>The frequency of removes (percentage). Default is 0%</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="replaceInvalidPercentage" type="rg:int">
+               <annotation>
+                  <documentation>In case we test replace performance, the frequency of replaces that should fail (percentage). Default is 40%</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="sharedKeys" type="rg:boolean">
+               <annotation>
+                  <documentation>By default each client thread operates on his private set of keys. Setting this to true introduces contention between the threads, the numThreads property says total amount of entries that are used by all threads. Default is false.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="sizeOfAnAttribute" type="rg:int">
+               <annotation>
+                  <documentation>*DEPRECATED* Size of the value in bytes. Default is 1000.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="transactionSize" type="rg:int">
+               <annotation>
+                  <documentation>Number of requests in one transaction. Default is 1.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="useAtomics" type="rg:boolean">
+               <annotation>
+                  <documentation>If true, putIfAbsent and replace operations are used. Default is false.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="useHistogramStatistics" type="rg:boolean">
+               <annotation>
+                  <documentation>The test will produce operation statistics in histogram. Default is false.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="useSimpleStatistics" type="rg:boolean">
+               <annotation>
+                  <documentation>The test will produce operation statistics as average values. Default is true.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="useTransactions" type="rg:java_lang_Boolean">
+               <annotation>
+                  <documentation>Specifies if the requests should be explicitely wrapped in transactions. By defaultthe cachewrapper is queried whether it does support the transactions, if it does,transactions are used, otherwise these are not.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="writePercentage" type="rg:int">
+               <annotation>
+                  <documentation>Ratio of writes = PUT requests (percentage). Default is 20%</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="writeTxPercentage" type="rg:int">
+               <annotation>
+                  <documentation>The frequency of transactions that may perform writes (percentage). Default is 20%</documentation>
+               </annotation>
+            </attribute>
+         </extension>
+      </complexContent>
+   </complexType>
    <complexType name="CsvReportGeneration">
       <annotation>
          <documentation>Generates report in CSV format from the latest StressTest results</documentation>
@@ -766,6 +933,165 @@
             <attribute name="reportDirectory" type="string">
                <annotation>
                   <documentation>Path to directory where the report (output) should be generated. Default is 'reports'.</documentation>
+               </annotation>
+            </attribute>
+         </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="InitStressTest">
+      <annotation>
+         <documentation>Benchmark where several client threads access cache limited by time or number of requests.</documentation>
+      </annotation>
+      <complexContent>
+         <extension base="rg:AbstractDist">
+            <attribute name="bulkSize" type="rg:int">
+               <annotation>
+                  <documentation>Number of keys inserted/retrieved within one operation. Applicable only when the cache wrappersupports bulk operations. Default is 1 (no bulk operations).</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="cacheSpecificKeyGenerator" type="rg:boolean">
+               <annotation>
+                  <documentation>Specifies whether the key generator is produced by a cache wrapper and therefore is product-specific. Default is false.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="commitTransactions" type="rg:boolean">
+               <annotation>
+                  <documentation>Specifies whether the transactions should be committed (true) or rolled back (false). Default is true</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="duration" type="rg:long__org_radargun_config_TimeConverter">
+               <annotation>
+                  <documentation>Benchmark duration. This takes precedence over numRequests. By default switched off.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="entrySize" type="rg:int">
+               <annotation>
+                  <documentation>Size of the value in bytes. Default is 1000.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="fixedKeys" type="rg:boolean">
+               <annotation>
+                  <documentation>The keys can be fixed for the whole test run period or we the set can change over time. Default is true = fixed.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="generateHistogramRange" type="rg:boolean">
+               <annotation>
+                  <documentation>Generate a range for histogram with operations statistics (for use in next stress tests). Default is false.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="keyGeneratorClass" type="string">
+               <annotation>
+                  <documentation>Full class name of the key generator. Default is org.radargun.stressors.StringKeyGenerator.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="keyGeneratorParam" type="string">
+               <annotation>
+                  <documentation>Used to initialize the key generator. Null by default.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="loadAllKeys" type="rg:boolean">
+               <annotation>
+                  <documentation>This option is valid only for sharedKeys=true. It forces local loading of all keys (not only numEntries/numNodes). Default is false.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="numEntries" type="rg:int">
+               <annotation>
+                  <documentation>Number of key-value entries per each client thread which should be used. Default is 100.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="numOfThreads" type="rg:int">
+               <annotation>
+                  <documentation>*DEPRECATED* The number of threads that will work on this slave. Default is 10.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="numRequests" type="rg:int">
+               <annotation>
+                  <documentation>Total number of request to be made against this session: reads + writes. If duration is specified this value is ignored. Default is 50000.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="numThreads" type="rg:int">
+               <annotation>
+                  <documentation>The number of threads that will work on this slave. Default is 10.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="numberOfAttributes" type="rg:int">
+               <annotation>
+                  <documentation>*DEPRECATED* Number of key-value entries per each client thread which should be used. Default is 100.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="numberOfRequests" type="rg:int">
+               <annotation>
+                  <documentation>*DEPRECATED* Total number of request to be made against this session: reads + writes. If duration is specified this value is ignored. Default is 50000.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="opsCountStatusLog" type="rg:int">
+               <annotation>
+                  <documentation>Number of operations after which a log entry should be written. Default is 5000.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="poolKeys" type="rg:boolean">
+               <annotation>
+                  <documentation>Keep all keys in a pool - do not generate the keys for each request anew. Default is true.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="preferAsyncOperations" type="rg:boolean">
+               <annotation>
+                  <documentation>When executing bulk operations, prefer version with multiple async operations over native implementation. Default is false.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="removePercentage" type="rg:int">
+               <annotation>
+                  <documentation>The frequency of removes (percentage). Default is 0%</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="replaceInvalidPercentage" type="rg:int">
+               <annotation>
+                  <documentation>In case we test replace performance, the frequency of replaces that should fail (percentage). Default is 40%</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="sharedKeys" type="rg:boolean">
+               <annotation>
+                  <documentation>By default each client thread operates on his private set of keys. Setting this to true introduces contention between the threads, the numThreads property says total amount of entries that are used by all threads. Default is false.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="sizeOfAnAttribute" type="rg:int">
+               <annotation>
+                  <documentation>*DEPRECATED* Size of the value in bytes. Default is 1000.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="transactionSize" type="rg:int">
+               <annotation>
+                  <documentation>Number of requests in one transaction. Default is 1.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="useAtomics" type="rg:boolean">
+               <annotation>
+                  <documentation>If true, putIfAbsent and replace operations are used. Default is false.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="useHistogramStatistics" type="rg:boolean">
+               <annotation>
+                  <documentation>The test will produce operation statistics in histogram. Default is false.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="useSimpleStatistics" type="rg:boolean">
+               <annotation>
+                  <documentation>The test will produce operation statistics as average values. Default is true.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="useTransactions" type="rg:java_lang_Boolean">
+               <annotation>
+                  <documentation>Specifies if the requests should be explicitely wrapped in transactions. By defaultthe cachewrapper is queried whether it does support the transactions, if it does,transactions are used, otherwise these are not.</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="writePercentage" type="rg:int">
+               <annotation>
+                  <documentation>Ratio of writes = PUT requests (percentage). Default is 20%</documentation>
+               </annotation>
+            </attribute>
+            <attribute name="writeTxPercentage" type="rg:int">
+               <annotation>
+                  <documentation>The frequency of transactions that may perform writes (percentage). Default is 20%</documentation>
                </annotation>
             </attribute>
          </extension>
