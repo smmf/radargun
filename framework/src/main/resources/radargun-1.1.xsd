@@ -28,6 +28,8 @@
                         <element name="ClusterValidation" type="rg:ClusterValidation"/>
                         <element name="ContinueStressTest" type="rg:ContinueStressTest"/>
                         <element name="WebSessionBenchmark" type="rg:ContinueStressTest"/>
+                        <element name="ContinueStressTestWarmup" type="rg:ContinueStressTestWarmup"/>
+                        <element name="WebSessionWarmup" type="rg:ContinueStressTestWarmup"/>
                         <element name="CsvReportGeneration" type="rg:CsvReportGeneration"/>
                         <element name="DataForQuery" type="rg:DataForQuery"/>
                         <element name="DestroyWrapper" type="rg:DestroyWrapper"/>
@@ -35,6 +37,8 @@
                         <element name="GenerateChart" type="rg:GenerateChart"/>
                         <element name="InitStressTest" type="rg:InitStressTest"/>
                         <element name="WebSessionBenchmark" type="rg:InitStressTest"/>
+                        <element name="InitStressTestWarmup" type="rg:InitStressTestWarmup"/>
+                        <element name="WebSessionWarmup" type="rg:InitStressTestWarmup"/>
                         <element name="IsolationLevelCheck" type="rg:IsolationLevelCheck"/>
                         <element name="JMXClusterValidation" type="rg:JMXClusterValidation"/>
                         <element name="JMXClusterValidationPrepare" type="rg:JMXClusterValidationPrepare"/>
@@ -145,6 +149,8 @@
             <element name="ClusterValidation" type="rg:ClusterValidation"/>
             <element name="ContinueStressTest" type="rg:ContinueStressTest"/>
             <element name="WebSessionBenchmark" type="rg:ContinueStressTest"/>
+            <element name="ContinueStressTestWarmup" type="rg:ContinueStressTestWarmup"/>
+            <element name="WebSessionWarmup" type="rg:ContinueStressTestWarmup"/>
             <element name="CsvReportGeneration" type="rg:CsvReportGeneration"/>
             <element name="DataForQuery" type="rg:DataForQuery"/>
             <element name="DestroyWrapper" type="rg:DestroyWrapper"/>
@@ -152,6 +158,8 @@
             <element name="GenerateChart" type="rg:GenerateChart"/>
             <element name="InitStressTest" type="rg:InitStressTest"/>
             <element name="WebSessionBenchmark" type="rg:InitStressTest"/>
+            <element name="InitStressTestWarmup" type="rg:InitStressTestWarmup"/>
+            <element name="WebSessionWarmup" type="rg:InitStressTestWarmup"/>
             <element name="IsolationLevelCheck" type="rg:IsolationLevelCheck"/>
             <element name="JMXClusterValidation" type="rg:JMXClusterValidation"/>
             <element name="JMXClusterValidationPrepare" type="rg:JMXClusterValidationPrepare"/>
@@ -813,6 +821,14 @@
          </extension>
       </complexContent>
    </complexType>
+   <complexType name="ContinueStressTestWarmup">
+      <annotation>
+         <documentation>Warmup stage for stress test benchmarks.</documentation>
+      </annotation>
+      <complexContent>
+         <extension base="rg:ContinueStressTest"/>
+      </complexContent>
+   </complexType>
    <complexType name="CsvReportGeneration">
       <annotation>
          <documentation>Generates report in CSV format from the latest StressTest results</documentation>
@@ -1095,6 +1111,14 @@
                </annotation>
             </attribute>
          </extension>
+      </complexContent>
+   </complexType>
+   <complexType name="InitStressTestWarmup">
+      <annotation>
+         <documentation>Warmup stage for stress test benchmarks.</documentation>
+      </annotation>
+      <complexContent>
+         <extension base="rg:InitStressTest"/>
       </complexContent>
    </complexType>
    <complexType name="IsolationLevelCheck">
