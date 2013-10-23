@@ -30,6 +30,7 @@
       <module>plugins/ff2-lf</module>
       <module>plugins/jvstm1</module>
       <module>plugins/jvstm2</module>
+      <module>plugins/tdmock</module>
    </modules>
 
    <scm>
@@ -199,7 +200,7 @@
                         </java>
 
                         <echo
-                           message="Packaging the framework, and the following plugins: hazelcast2, hazelcast3, infinispan4, infinispan50, infinispan51, infinispan52, infinispan53, infinispan60, jbosscache2, jbosscache3, ehcache25, ehcache26, terracotta3, ff2, ff2-lf, jvstm1, jvstm2" />
+                           message="Packaging the framework, and the following plugins: hazelcast2, hazelcast3, infinispan4, infinispan50, infinispan51, infinispan52, infinispan53, infinispan60, jbosscache2, jbosscache3, ehcache25, ehcache26, terracotta3, ff2, ff2-lf, jvstm1, jvstm2, tdmock" />
 
                         <copy todir="${distribution.artifact}/plugins/hazelcast2">
                            <fileset dir="plugins/hazelcast2/target/distribution/plugin-hazelcast2-bin/plugin-hazelcast2">
@@ -311,6 +312,12 @@
 
                         <copy todir="${distribution.artifact}/plugins/jvstm2">
                            <fileset dir="plugins/jvstm2/target/distribution/plugin-jvstm2-bin/plugin-jvstm2">
+                              <include name="**/*" />
+                           </fileset>
+                        </copy>
+
+                        <copy todir="${distribution.artifact}/plugins/tdmock">
+                           <fileset dir="plugins/tdmock/target/distribution/plugin-tdmock-bin/plugin-tdmock">
                               <include name="**/*" />
                            </fileset>
                         </copy>

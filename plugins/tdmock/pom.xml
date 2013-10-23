@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>org.radargun</groupId>
+      <artifactId>radargun-plugin-parent</artifactId>
+      <relativePath>../pom.xml</relativePath>
+      <version>1.1.0-SNAPSHOT</version>
+   </parent>
+
+   <artifactId>plugin-tdmock</artifactId>
+   <name>Temporarily Distributed Mock</name>
+   <!-- <name>Mock Data Grid plugin for Radargun</name> -->
+   <description>
+      This plugin can be used to emulate the existence of a Data Grid in
+      workloads that do not share keys between different nodes.  Each node
+      uses a ConcurrentHashMap to store the information, and the plugin uses
+      RadarGun-specific knowlege to provide answer to requests that assume a
+      connection between the nodes, such as the ClusterValidationStage.
+
+       It initially uses a real data grid to shared information, enabling its
+       users to perform an initial setup that may required shared state.
+       After a fixed number of transactions is stops using the real data grid
+       and uses the mock only.
+   </description>
+
+   <properties>
+      <version.slf4j.api>1.7.2</version.slf4j.api>
+   </properties>
+
+   <dependencies>
+       <dependency>
+           <groupId>org.slf4j</groupId>
+           <artifactId>slf4j-log4j12</artifactId>
+           <version>${version.slf4j.api}</version>
+       </dependency>
+   </dependencies>
+
+</project>
