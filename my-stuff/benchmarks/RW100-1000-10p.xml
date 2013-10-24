@@ -9,5 +9,5 @@
       <ClearCluster/>
       <InitStressTest numRequests="10000000" numEntries="1000" opsCountStatusLog="500000" numThreads="4" useTransactions="true" transactionSize="1000" writePercentage="10" writeTxPercentage="100" duration="60000" />
       <ContinueStressTest numRequests="10000000" numEntries="1000" opsCountStatusLog="500000" numThreads="4" useTransactions="true" transactionSize="1000" writePercentage="10" writeTxPercentage="100" duration="60000" />
-      <CsvReportGeneration/>
+      <CsvReportGeneration fileName="PUT_FILE_NAME_HERE"/>
    </benchmark>

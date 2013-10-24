@@ -151,8 +151,10 @@ for product in ${PRODUCTS}; do
 	# delete stale data from previous runs
 	\rm -rf ObjectStore
 
+        SHORT_PRODUCT=`basename ${product} .xml`
         # configure the # of nodes
-	sed -e s/NODE_SIZE_TEMPLATE/${node}/g "${RG_BENCH_TEMPLATE}" > "${RG_BENCH_REAL}"
+	sed -e s/NODE_SIZE_TEMPLATE/${node}/g -e s/PUT_FILE_NAME_HERE/${SHORT_PRODUCT}/g "${RG_BENCH_TEMPLATE}" > "${RG_BENCH_REAL}"
+
         # print it
 	head "${RG_BENCH_REAL}" | grep initSize
 
