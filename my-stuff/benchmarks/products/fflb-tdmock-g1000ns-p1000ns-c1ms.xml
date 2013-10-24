@@ -1,0 +1,5 @@
+   <products>
+      <ff2>
+         <config decorate="tdmock" name="mock-repl-sync-rc.xml" getSleepNanos="1000" putSleepNanos="1000" commitSleepNanos="1000000000" />
+      </ff2>
+   </products>
