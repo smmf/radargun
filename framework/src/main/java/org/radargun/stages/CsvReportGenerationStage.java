@@ -37,6 +37,9 @@ public class CsvReportGenerationStage extends AbstractMasterStage {
    @Property(doc = "Adds a line with average results. Default is false.")
    private boolean computeAverage;
 
+   @Property(doc = "The filename for the CSV.")
+   private String fileName;
+   
    private String separator = ",";
 
    private File outputFile;
@@ -227,6 +230,10 @@ public class CsvReportGenerationStage extends AbstractMasterStage {
 
       // file name is in the format data_<cache-product>_<cache-cfg.xml>_<cluster-size>.csv
       String actualFileName =  masterState.nameOfTheCurrentBenchmark() + "_" + masterState.configNameOfTheCurrentBenchmark() + "_" + clusterSize +".csv";
+
+      if (this.fileName != null) {
+         actualFileName = this.fileName + "_" + clusterSize + ".csv";
+      }
 
       outputFile = Utils.createOrReplaceFile(parentDir, actualFileName);
    }
