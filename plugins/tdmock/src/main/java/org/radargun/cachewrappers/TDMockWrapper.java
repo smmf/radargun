@@ -30,6 +30,11 @@ public class TDMockWrapper implements CacheWrapper/*
 
    private CacheWrapper realWrapper;
    private AtomicInteger distributionThreshold = new AtomicInteger(0);
+
+   private int getSleepNanos = 0;
+   private int putSleepNanos = 0;
+   private int commitSleepNanos = 0;
+
    private static final ThreadLocal<Boolean> usingRealWrapper = new ThreadLocal<Boolean>();
 
    private boolean shouldUseRealWrapper() {
@@ -41,6 +46,24 @@ public class TDMockWrapper implements CacheWrapper/*
    public void setUp(String configuration, boolean isLocal, int nodeIndex, TypedProperties confAttributes)
          throws Exception {
       logger.info("Setup TDMock");
+      logger.info("config={}, isLocal={}, nodeIndex={}, confAttributes={}", configuration, isLocal, nodeIndex,
+            confAttributes);
+
+      String getSleepStr = confAttributes.getProperty("getSleepNanos");
+      String putSleepStr = confAttributes.getProperty("putSleepNanos");
+      String commitSleepStr = confAttributes.getProperty("commitSleepNanos");
+
+      try {
+         this.getSleepNanos = getSleepStr == null ? 0 : Integer.parseInt(getSleepStr);
+         this.putSleepNanos = putSleepStr == null ? 0 : Integer.parseInt(putSleepStr);
+         this.commitSleepNanos = commitSleepStr == null ? 0 : Integer.parseInt(commitSleepStr);
+      } catch (NumberFormatException e) {
+         logger.error("Failed to configure sleep time for either get/put/commit:", e);
+         throw e;
+      }
+
+      logger.info("Sleep times: GET={}ns, PUT={}ns, COMMIT={}ns", this.getSleepNanos, this.putSleepNanos,
+            this.commitSleepNanos);
 
       try {
          this.realWrapper = getCacheWrapper(REAL_WRAPPER);
@@ -74,10 +97,12 @@ public class TDMockWrapper implements CacheWrapper/*
    public void put(String bucket, Object key, Object value) throws Exception {
       //      super.put(bucket, key, value);
       logger.debug("PUT: bucket={{}}, key={{}}, value={{}}", bucket, key, value);
-      chm.put(key, value);
       if (shouldUseRealWrapper()) {
+         chm.put(key, value); // don't sleep here
          logger.debug("---> also to the realWrapper");
          this.realWrapper.put(bucket, key, value);
+      } else {
+         sleepyPut(key, value);
       }
    }
 
@@ -90,7 +115,7 @@ public class TDMockWrapper implements CacheWrapper/*
          return realWrapper.get(bucket, key);
       } else {
          logger.debug("---> from mock");
-         return chm.get(key);
+         return sleepyGet(key);
       }
    }
 
@@ -185,6 +210,12 @@ public class TDMockWrapper implements CacheWrapper/*
          logger.debug("---> end tx on realWrapper");
          usingRealWrapper.set(Boolean.FALSE);
          this.realWrapper.endTransaction(successful);
+      } else {
+         // just simulate the access with a delay
+         if (successful) {
+            //            sleep(commitSleepNanos, 0);
+            sleep(commitSleepNanos);
+         }
       }
    }
 
@@ -205,6 +236,35 @@ public class TDMockWrapper implements CacheWrapper/*
       URLClassLoader loader = Utils.buildProductSpecificClassLoader(product, getClass().getClassLoader());
       Thread.currentThread().setContextClassLoader(loader);
       return (CacheWrapper) loader.loadClass(fqnClass).newInstance();
+   }
+
+   private Object sleepyGet(Object key) {
+      //      sleep(0, this.getSleepNanos);
+      sleep(this.getSleepNanos);
+      return chm.get(key);
+   }
+
+   private void sleepyPut(Object key, Object value) {
+      //      sleep(0, this.putSleepNanos);
+      sleep(this.putSleepNanos);
+      chm.put(key, value);
+   }
+
+   public static void sleep(long nanos) {
+      long now = System.nanoTime();
+      long requestedTime = now + nanos;
+
+      while (now < requestedTime) {
+         now = System.nanoTime();
+      }
+   }
+
+   public static void sleep(int millis, int nanos) {
+      try {
+         Thread.sleep(millis, nanos);
+      } catch (InterruptedException e) {
+         logger.info("Sleep was interrupted.");
+      }
    }
 
 }
