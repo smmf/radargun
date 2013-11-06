@@ -1,0 +1,5 @@
+   <products>
+      <tdmock>
+         <config name="mock-repl-sync-rc.xml" getSleepNanos="2800" putSleepNanos="67000" commitSleepNanos="64000" />
+      </tdmock>
+   </products>
