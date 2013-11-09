@@ -1,9 +1,10 @@
 <config xmlns="urn:org:jgroups"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/JGroups-3.3.xsd">
+        xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/JGroups-3.4.xsd">
    <UDP
+         singleton_name="single_udp"
          mcast_addr="${jgroups.udp.mcast_addr:228.6.7.8}"
-         mcast_port="${jgroups.udp.mcast_port:46655}"
+         mcast_port="${jgroups.udp.mcast_port:46644}"
          tos="8"
          ucast_recv_buf_size="20m"
          ucast_send_buf_size="640k"
@@ -71,6 +72,6 @@
    <UFC max_credits="1m" min_threshold="0.40"/>
    <MFC max_credits="1m" min_threshold="0.40"/>
    <FRAG2 frag_size="30k"  />
-   <!-- <COUNTER bypass_bundling="true" timeout="5000"/> -->
+   <COUNTER bypass_bundling="true" timeout="5000"/>
    <RSVP timeout="60000" resend_interval="500" ack_on_delivery="false" />
 </config>

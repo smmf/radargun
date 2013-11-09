@@ -51,7 +51,7 @@
             transactionManagerLookupClass="org.infinispan.transaction.lookup.GenericTransactionManagerLookup"
             useEagerLocking="false"
             transactionMode="TRANSACTIONAL"
-            transactionProtocol="TOTAL_ORDER"
+            transactionProtocol="DEFAULT"
             syncRollbackPhase="false"
             cacheStopTimeout="30000"
             useSynchronization="true"
