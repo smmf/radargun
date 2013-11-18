@@ -107,6 +107,7 @@ fi
 mkdir ${RADARGUN_HOME}/conf/products 2> /dev/null
 \cp -r ${RADARGUN_MY_STUFF}/benchmarks/products/*.xml ${RADARGUN_HOME}/conf/products
 \cp -r ${RADARGUN_MY_STUFF}/plugin-confs/* ${RADARGUN_HOME}/plugins/
+\cp -r ${RADARGUN_MY_STUFF}/zmq-sequencer ${RADARGUN_HOME}
 
 # check the benchmark's partial xml
 if [ ! -f "${RADARGUN_HOME}/conf/${BENCH_FILE}" ]; then
@@ -145,6 +146,8 @@ for product in ${PRODUCTS}; do
 	killall -9 java
 	echo "RUN-TESTS: Waiting a little more..."
 	sleep 1
+
+        java -cp ${RADARGUN_HOME}/zmq-sequencer/jeromq-0.3.2-SNAPSHOT.jar:${RADARGUN_HOME}/zmq-sequencer/pubsub-bench-1.0-SNAPSHOT.jar  bench.pubsub.ZeroMQSequencer &
 
 	echo "RUN-TESTS: "`date "+%F %H:%M:%S"`"Running $product with $node node(s)"
 
