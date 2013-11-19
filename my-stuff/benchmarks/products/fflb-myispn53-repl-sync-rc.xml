@@ -1,0 +1,5 @@
+   <products>
+      <ff2>
+         <config decorate="myispn53" name="myispn53-repl-sync-rc.xml"/>
+      </ff2>
+   </products>

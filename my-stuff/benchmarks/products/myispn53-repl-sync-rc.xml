@@ -1,0 +1,5 @@
+   <products>
+      <myispn53>
+         <config name="myispn53-repl-sync-rc.xml"/>
+      </myispn53>
+   </products>
