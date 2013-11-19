@@ -24,7 +24,7 @@ public class TDMockWrapper implements CacheWrapper/*
    private static final String MISSING_PRODUCT_PLUGIN = "Please provide the name of a valid plugin to decorate using the 'decorated=' property";
    private static final String UNDERLYING_WRAPPER_EXCEPTION = "Exception in underlying cache wrapper";
 
-   private static final int MAX_DISTRIBUTION_THRESHOLD = 100;
+   private static final int MAX_DISTRIBUTION_THRESHOLD = 500;
 
    protected final ConcurrentHashMap<Object, Object> chm = new ConcurrentHashMap<Object, Object>();
 
