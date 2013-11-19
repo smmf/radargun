@@ -38,7 +38,12 @@ public class DataGridDecorator implements DataGrid {
     }
 
     private CacheWrapper cacheWrapper;
-    private boolean inTransaction = false;
+    private final ThreadLocal<Boolean> inTransaction = new ThreadLocal<Boolean>() {
+        @Override
+        protected Boolean initialValue() {
+            return false;
+        };
+    };
 
     @Override
     public void init(JvstmLockFreeConfig ffConfig) {
@@ -128,9 +133,10 @@ public class DataGridDecorator implements DataGrid {
     public void beginTransaction() {
         try {
             this.cacheWrapper.startTransaction();
-            this.inTransaction = true;
-        } catch (Exception e) {
-            this.inTransaction = false;
+            this.inTransaction.set(true);
+        } catch (RuntimeException e) {
+            this.inTransaction.set(false);
+            throw e;
         }
     }
 
@@ -139,7 +145,7 @@ public class DataGridDecorator implements DataGrid {
         try {
             this.cacheWrapper.endTransaction(true);
         } finally {
-            this.inTransaction = false;
+            this.inTransaction.set(false);
         }
     }
 
@@ -148,13 +154,13 @@ public class DataGridDecorator implements DataGrid {
         try {
             this.cacheWrapper.endTransaction(false);
         } finally {
-            this.inTransaction = false;
+            this.inTransaction.set(false);
         }
     }
 
     @Override
     public boolean inTransaction() {
-        return this.inTransaction;
+        return this.inTransaction.get();
     }
 
     // Adapted from LocalBenchmark.getCacheWrapper
