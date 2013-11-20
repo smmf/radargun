@@ -137,6 +137,13 @@ public class ContinueStressTestStressor extends AbstractCacheWrapperStressor {
       }
    };
    
+   private ThreadLocal<Integer> currentTxRemainingOps = new ThreadLocal<Integer>() {
+      protected Integer initialValue() {
+         log.warn("initializing count to " + transactionSize);
+         return transactionSize;
+      }; 
+    };
+    
    protected void init(CacheWrapper wrapper) {
       this.cacheWrapper = wrapper;
       if (wrapper instanceof AtomicOperationsCapable) {
@@ -302,20 +309,30 @@ public class ContinueStressTestStressor extends AbstractCacheWrapperStressor {
 
       @Override
       public Object run(ContinueStressor stressor, int iteration) {
-         int randomAction = r.nextInt(100);
+//         int randomAction = r.nextInt(100);
          int randomKeyInt = r.nextInt(numEntries - 1);
          Object key = getKey(randomKeyInt, stressor.threadIndex);
 
          // check if ThreadLocal var already states the decision
          if (currentTransactionIsReadOnly.get()) {
             return stressor.makeRequest(iteration, Operation.GET, key);
-         } else if (randomAction < writePercentage) {
-            return stressor.makeRequest(iteration, Operation.PUT, key, generateValue(entrySize));
-         } else if (randomAction < writePercentage + removePercentage) {
-            return stressor.makeRequest(iteration, Operation.REMOVE, key);
          } else {
-            return stressor.makeRequest(iteration, Operation.GET, key);
+            int count = currentTxRemainingOps.get();
+            currentTxRemainingOps.set(count - 1);
+            // writeTxPercentage is actually the absolute number of writes to perform in a tx
+            if (count > writePercentage) {
+               return stressor.makeRequest(iteration, Operation.GET, key);
+            } else {
+               return stressor.makeRequest(iteration, Operation.PUT, key, generateValue(entrySize));
+            }
          }
+//         } else if (randomAction < writePercentage) {
+//            return stressor.makeRequest(iteration, Operation.PUT, key, generateValue(entrySize));
+//         } else if (randomAction < writePercentage + removePercentage) {
+//            return stressor.makeRequest(iteration, Operation.REMOVE, key);
+//         } else {
+//            return stressor.makeRequest(iteration, Operation.GET, key);
+//         }
       }
 
       protected abstract Object getKey(int keyId, int threadIndex);
@@ -783,6 +800,7 @@ public class ContinueStressTestStressor extends AbstractCacheWrapperStressor {
             int randomTransaction = r.nextInt(100);
             if (randomTransaction < writeTxPercentage) {
                currentTransactionIsReadOnly.set(Boolean.FALSE);
+               currentTxRemainingOps.set(transactionSize);
             } else {
                currentTransactionIsReadOnly.set(Boolean.TRUE);
             }
