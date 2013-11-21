@@ -29,7 +29,7 @@
                 jmxDomain="org.infinispan"/>
         <transport clusterName="default">
             <properties>
-                <property name="configurationFile" value="jgroups-udp.xml"/>
+                <property name="configurationFile" value="nmld-jgroups.xml"/>
             </properties>
         </transport>
     </global>
