@@ -1,0 +1,5 @@
+   <products>
+      <infinispan53>
+         <config name="ispn53-dist-sync-rc.xml"/>
+      </infinispan53>
+   </products>

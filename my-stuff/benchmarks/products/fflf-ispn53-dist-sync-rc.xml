@@ -1,0 +1,5 @@
+   <products>
+      <ff2-lf>
+         <config decorate="infinispan53" name="ispn53-dist-sync-rc.xml"/>
+      </ff2-lf>
+   </products>
